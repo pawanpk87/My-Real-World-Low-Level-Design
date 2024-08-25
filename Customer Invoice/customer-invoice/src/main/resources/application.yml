@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: customer-invoice-service
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/mydb
+    username: root
+    password: pawan
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+services:
+  order:
+    host: "api.orderservice.com"
+    scheme: "https"
+    orderDetailsPath: "/orders/{orderId}"
+
+invoice:
+  sns:
+    notificationTopicArn: arn:aws:sns:us-east-1:000000000000:INVOICE_NOTIFICATION
+    attribute:
+      attributeDataType: "String"
+      attributeName: "invoice_email"
+
+aws:
+  sns:
+    endpoint: http://localhost:4566
+  region: us-east-1
+  accessKeyId: test
+  secretAccessKey: test
+
+resilience4j.retry:
+  instances:
+    orderServiceRetry:
+      max-attempts: 3
+      wait-duration: 2s
+      retry-exceptions:
+        - org.springframework.web.client.RestClientException
